@@ -3,47 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlxEvt - Cloud Software Solutions</title>
+    <title>Contact Information | ABS COMPANY INC.</title>
     <style>
-        body { 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            line-height: 1.6; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 2rem; 
-            color: #1f2937; 
-            background-color: #f9fafb;
+        :root {
+            --primary: #00f2ff;
+            --bg: #0a0a0b;
+            --card-bg: #111114;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a8;
+            --border: #1f1f23;
         }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
         .container {
-            background-color: #ffffff;
-            padding: 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        h1 { color: #2563eb; margin-top: 0; }
-        h2 { color: #374151; font-size: 1.25rem; margin-top: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; }
-        .contact-info { 
-            background: #f3f4f6; 
-            padding: 1.5rem; 
-            border-radius: 8px; 
-            margin-top: 2rem; 
-            border-left: 4px solid #2563eb;
+
+        .brand-header {
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
         }
-        .contact-info p { margin: 0.5rem 0; }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            margin: 0;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .info-group {
+            margin-bottom: 24px;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .value {
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .value a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .value a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-align: center;
+        }
+
+        .nav-back {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .nav-back:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ABS COMPANY INC.</h1>
-        <p>Welcome to our central business directory. We specialize in developing cloud-based SaaS applications, productivity tools, and automated workflows for software engineering.</p>
-        <p>Our products are accessed digitally via secure web applications. Customers are billed through transparent monthly recurring subscriptions or one-time digital purchases. All software and services are delivered entirely online.</p>
 
-        <div class="contact-info">
-            <h2>Contact Information</h2>
-            <p><strong>Customer Support:</strong> support@alxevt.com</p>
-            <p><strong>Phone:</strong> +1 516 847-4658</p>
-            <p><strong>Business Address:</strong> Jersey City, NJ, United States</p>
+    <main class="container">
+        <div class="card">
+            <header class="brand-header">
+                <h1>ABS COMPANY INC.</h1>
+            </header>
+
+            <section class="info-group">
+                <span class="label">Public Business Name</span>
+                <div class="value">ABS COMPANY INC.</div>
+            </section>
+
+            <section class="info-group">
+                <span class="label">Support Phone</span>
+                <div class="value">
+                    <a href="tel:+15168474658">+1 (516) 847-4658</a>
+                </div>
+            </section>
+
+            <section class="info-group">
+                <span class="label">Business Address</span>
+                <div class="value">
+                    159 2nd Street<br>
+                    Jersey City, NJ 07302<br>
+                    United States
+                </div>
+            </section>
+
+            <center>
+                <a href="/" class="nav-back">← Back to Labs</a>
+            </center>
         </div>
-    </div>
+
+        <footer class="footer-note">
+            &copy; 2026 ABS COMPANY INC. All rights reserved.
+        </footer>
+    </main>
+
 </body>
 </html>
