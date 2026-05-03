@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "alxevt-landing",
+  "compatibility_date": "2026-05-03",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "contact-info"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
