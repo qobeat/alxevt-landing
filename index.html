@@ -23,7 +23,7 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         h1 {
             font-size: 2.5rem;
@@ -36,7 +36,33 @@
         p {
             opacity: 0.7;
             font-size: 1rem;
+            margin-bottom: 20px;
         }
+        
+        /* New Navigation Styles */
+        .nav-menu {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+        }
+        .nav-link {
+            color: var(--primary);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border: 1px solid var(--primary);
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background-color: var(--primary);
+            color: var(--bg);
+            box-shadow: 0 0 15px var(--primary);
+            font-weight: bold;
+        }
+
         canvas {
             border: 2px solid var(--primary);
             background: #000;
@@ -61,6 +87,11 @@
         <h1>ALXEVT</h1>
         <p>A.I. AGENTIC SYSTEMS UNDER CONSTRUCTION</p>
     </div>
+
+    <nav class="nav-menu">
+        <a href="https://timer.alxevt.com" class="nav-link" target="_blank">Simple Timer App</a>
+        <a href="/contact-info/" class="nav-link">Contact Info</a>
+    </nav>
 
     <canvas id="gameCanvas" width="480" height="320"></canvas>
 
