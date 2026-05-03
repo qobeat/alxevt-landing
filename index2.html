@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALXEVT | Lab Frontier</title>
+    <style>
+        :root { --primary: #00f2ff; --bg: #050506; --accent: #ff00ea; }
+        body { background: var(--bg); color: white; font-family: 'Courier New', monospace; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+        .hud { text-align: center; margin-bottom: 10px; }
+        h1 { font-size: 1.8rem; letter-spacing: 4px; margin: 0; color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .menu { margin: 15px; display: flex; gap: 10px; }
+        button { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; cursor: pointer; transition: 0.3s; font-family: inherit; }
+        button:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+        canvas { border: 2px solid var(--primary); background: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); max-width: 90vw; }
+        .stats { margin-top: 10px; font-size: 0.9rem; color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="hud">
+        <h1>ALXEVT_LABS v2.0</h1>
+        <div class="stats" id="status">LEVEL 1: INITIALIZING...</div>
+    </div>
+
+    <div class="menu">
+        <button onclick="switchGame('breakout')">QUANTUM BREAKOUT</button>
+        <button onclick="switchGame('snake')">NEURAL SNAKE</button>
+    </div>
+
+    <canvas id="gameCanvas" width="480" height="320"></canvas>
+
+    <div class="stats" id="scoreBoard">SCORE: 0 | HIGH: 0</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const statusEl = document.getElementById("status");
+        const scoreEl = document.getElementById("scoreBoard");
+
+        let currentGame = 'breakout';
+        let score = 0;
+        let highScore = 0;
+        let gameLoop;
+        let level = 1;
+
+        // --- AUDIO ENGINE ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // --- BREAKOUT LOGIC ---
+        let ball = { x: 240, y: 300, dx: 3, dy: -3, radius: 6 };
+        let paddle = { w: 80, h: 10, x: 200 };
+        let bricks = [];
+        function initBreakout() {
+            level = 1; ball.dx = 3; ball.dy = -3; score = 0;
+            const cols = 6, rows = 3;
+            bricks = [];
+            for(let c=0; c<cols; c++) {
+                bricks[c] = [];
+                for(let r=0; r<rows; r++) bricks[c][r] = { x: 0, y: 0, status: 1 };
+            }
+        }
+
+        function drawBreakout() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw Bricks
+            let activeBricks = 0;
+            for(let c=0; c<6; c++) {
+                for(let r=0; r<3; r++) {
+                    if(bricks[c][r].status == 1) {
+                        activeBricks++;
+                        let bx = c*75 + 15; let by = r*25 + 40;
+                        bricks[c][r].x = bx; bricks[c][r].y = by;
+                        ctx.fillStyle = `hsl(${200 + (r*20)}, 100%, 50%)`;
+                        ctx.fillRect(bx, by, 70, 20);
+                    }
+                }
+            }
+            if(activeBricks === 0) { 
+                level++; ball.dx *= 1.2; ball.dy *= 1.2; 
+                playTone(600, 'square', 0.2); initBreakout(); 
+            }
+
+            // Draw Ball & Paddle
+            ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = varColor('--primary'); ctx.fillRect(paddle.x, canvas.height-10, paddle.w, 10);
+
+            // Physics
+            if(ball.x + ball.dx > canvas.width || ball.x + ball.dx < 0) { ball.dx = -ball.dx; playTone(200, 'sine', 0.05); }
+            if(ball.y + ball.dy < 0) { ball.dy = -ball.dy; playTone(200, 'sine', 0.05); }
+            else if(ball.y + ball.dy > canvas.height - 10) {
+                if(ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
+                    ball.dy = -ball.dy; playTone(400, 'triangle', 0.1);
+                } else { 
+                    playTone(100, 'sawtooth', 0.5); 
+                    if(score > highScore) highScore = score;
+                    initBreakout(); 
+                }
+            }
+            
+            // Brick Collision
+            for(let c=0; c<6; c++) {
+                for(let r=0; r<3; r++) {
+                    let b = bricks[c][r];
+                    if(b.status == 1 && ball.x > b.x && ball.x < b.x+70 && ball.y > b.y && ball.y < b.y+20) {
+                        ball.dy = -ball.dy; b.status = 0; score += 10;
+                        playTone(500 + (score), 'sine', 0.05);
+                    }
+                }
+            }
+            ball.x += ball.dx; ball.y += ball.dy;
+            statusEl.innerText = `PHASE: QUANTUM BREAKOUT | LEVEL: ${level}`;
+        }
+
+        // --- SNAKE LOGIC ---
+        let snake = [{x: 10, y: 10}];
+        let food = {x: 15, y: 15};
+        let sdx = 1, sdy = 0;
+        let lastTime = 0;
+        function drawSnake(time) {
+            if(time - lastTime < 100) return; // Control speed
+            lastTime = time;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const head = {x: snake[0].x + sdx, y: snake[0].y + sdy};
+            if(head.x < 0 || head.x >= 24 || head.y < 0 || head.y >= 16 || snake.some(s => s.x === head.x && s.y === head.y)) {
+                playTone(80, 'sawtooth', 0.4); snake = [{x: 10, y: 10}]; score = 0; return;
+            }
+            snake.unshift(head);
+            if(head.x === food.x && head.y === food.y) {
+                score += 5; playTone(800, 'sine', 0.05);
+                food = {x: Math.floor(Math.random()*24), y: Math.floor(Math.random()*16)};
+            } else { snake.pop(); }
+
+            ctx.fillStyle = "#ff00ea"; ctx.fillRect(food.x*20, food.y*20, 18, 18);
+            ctx.fillStyle = "#00f2ff"; snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 18, 18));
+            statusEl.innerText = `PHASE: NEURAL SNAKE | NODES: ${snake.length}`;
+        }
+
+        // --- CONTROLS ---
+        window.addEventListener('mousemove', e => {
+            let rect = canvas.getBoundingClientRect();
+            paddle.x = (e.clientX - rect.left) * (canvas.width / rect.width) - paddle.w/2;
+        });
+        window.addEventListener('keydown', e => {
+            if(e.key === 'ArrowUp' && sdy === 0) { sdx = 0; sdy = -1; }
+            if(e.key === 'ArrowDown' && sdy === 0) { sdx = 0; sdy = 1; }
+            if(e.key === 'ArrowLeft' && sdx === 0) { sdx = -1; sdy = 0; }
+            if(e.key === 'ArrowRight' && sdx === 0) { sdx = 1; sdy = 0; }
+        });
+
+        function switchGame(type) { 
+            currentGame = type; score = 0; 
+            if(type === 'breakout') initBreakout();
+            audioCtx.resume();
+        }
+
+        function loop(time) {
+            if(currentGame === 'breakout') drawBreakout();
+            else drawSnake(time);
+            scoreEl.innerText = `SCORE: ${score} | HIGH: ${highScore}`;
+            requestAnimationFrame(loop);
+        }
+
+        function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+        
+        initBreakout();
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
